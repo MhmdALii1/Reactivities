@@ -1,12 +1,14 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import type { FormEvent } from "react";
-type Props = {
-  activity?: Activity;
-  closeForm: () => void;
-  submitForm: (activity: Activity) => void;
-};
-export default function ActivityForm({ activity, closeForm, submitForm }: Props) {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+import { act, type FormEvent } from "react";
+import { useActivities } from "../../../lib/hooks/useActivities";
+import { Link, useNavigate, useParams } from "react-router";
+
+export default function ActivityForm() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const { updateActivity, createActivity, activity, isLoadingActivity } =
+    useActivities(id);
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const data: { [key: string]: FormDataEntryValue } = {};
@@ -15,13 +17,21 @@ export default function ActivityForm({ activity, closeForm, submitForm }: Props)
     });
     if (activity) {
       data.id = activity.id;
+      await updateActivity.mutateAsync(data as unknown as Activity);
+      navigate(`/activities/${activity.id}`);
+    } else {
+      await createActivity.mutate(data as unknown as Activity, {
+        onSuccess: (id) => {
+          navigate(`/activities/${id}`);
+        },
+      });
     }
-    submitForm(data as unknown as Activity);
   };
+  if (isLoadingActivity) return <Typography>Loading activity...</Typography>;
   return (
     <Paper sx={{ borderRadius: 2, padding: 3 }}>
-      <Typography variant="h5" gutterBottom>
-        Create Activity
+      <Typography variant="h5" gutterBottom color="primary">
+        {activity ? "Edit Activity" : "Create Activity"}
       </Typography>
       <Box
         component="form"
@@ -48,15 +58,29 @@ export default function ActivityForm({ activity, closeForm, submitForm }: Props)
           label="Date"
           type="date"
           slotProps={{ inputLabel: { shrink: true } }}
-          defaultValue={activity?.date}
+          defaultValue={
+            activity?.date
+              ? new Date(activity.date).toISOString().split("T")[0]
+              : new Date().toISOString().split("T")[0]
+          }
         />
         <TextField name="city" label="City" defaultValue={activity?.city} />
         <TextField name="venue" label="Venue" defaultValue={activity?.venue} />
         <Box display="flex" justifyContent="end" gap={3}>
-          <Button color="inherit" onClick={closeForm}>
+          <Button
+            component={Link}
+            to="/activities"
+            color="inherit"
+            onClick={() => {}}
+          >
             Cancel
           </Button>
-          <Button type="submit" variant="contained" color="success">
+          <Button
+            type="submit"
+            variant="contained"
+            color="success"
+            disabled={updateActivity.isPending || createActivity.isPending}
+          >
             Submit
           </Button>
         </Box>
