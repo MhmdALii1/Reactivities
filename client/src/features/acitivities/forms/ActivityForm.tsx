@@ -1,5 +1,5 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import { act, type FormEvent } from "react";
+import { type FormEvent } from "react";
 import { useActivities } from "../../../lib/hooks/useActivities";
 import { Link, useNavigate, useParams } from "react-router";
 
