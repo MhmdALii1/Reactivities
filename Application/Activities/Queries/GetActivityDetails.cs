@@ -16,7 +16,7 @@ namespace Application.Activities.Queries
             public async Task<Result<Activity>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var activity = await context.Activities.FindAsync([request.Id], cancellationToken);
-                if (activity == null) Result<Activity>.Failure("Activity not found", 404);
+                if (activity == null) return Result<Activity>.Failure("Activity not found", 404);
                 return Result<Activity>.Success(activity);
             }
         }
