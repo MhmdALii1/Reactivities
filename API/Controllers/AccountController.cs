@@ -1,9 +1,9 @@
-﻿using API.DTOs;
+﻿using System;
+using API.DTOs;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API.Controllers;
 
@@ -15,21 +15,24 @@ public class AccountController(SignInManager<User> signInManager) : BaseApiContr
     {
         var user = new User
         {
-            DisplayName = registerDto.DisplayName,
+            UserName = registerDto.Email,
             Email = registerDto.Email,
-            UserName = registerDto.Email
+            DisplayName = registerDto.DisplayName
         };
 
         var result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
 
         if (result.Succeeded) return Ok();
 
-        foreach (var error in result.Errors) {
+        foreach (var error in result.Errors)
+        {
             ModelState.AddModelError(error.Code, error.Description);
         }
+
         return ValidationProblem();
     }
 
+    [AllowAnonymous]
     [HttpGet("user-info")]
     public async Task<ActionResult> GetUserInfo()
     {
@@ -44,7 +47,7 @@ public class AccountController(SignInManager<User> signInManager) : BaseApiContr
             user.DisplayName,
             user.Email,
             user.Id,
-            user.ImageUrl,
+            user.ImageUrl
         });
     }
 
