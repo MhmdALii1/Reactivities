@@ -11,6 +11,7 @@ import AcitivityDashboard from "../../features/acitivities/dashboard/AcitivityDa
 import ActivityDetailsPage from "../../features/acitivities/details/ActivityDetailsPage";
 import ActivityForm from "../../features/acitivities/forms/ActivityForm";
 import RegisterForm from "../../features/account/RegsisterForm";
+import ProfilePage from "../../features/profiles/ProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
           { path: "activities/:id", element: <ActivityDetailsPage /> },
           { path: "createActivity", element: <ActivityForm key="create" /> },
           { path: "manage/:id", element: <ActivityForm /> },
+          { path: "profiles/:id", element: <ProfilePage /> },
         ],
       },
       { path: "", element: <HomePage /> },

@@ -13,32 +13,39 @@ import {
 import { Link } from "react-router";
 import { formatDate } from "../../../lib/util/util";
 import AvatarPopover from "../../../app/shared/components/AvatarPopover";
+
 type Props = {
   activity: Activity;
 };
+
 export default function ActivityCard({ activity }: Props) {
-  const label = activity.isHost ? "You are hosting" : "You are going ";
+  const label = activity.isHost ? "You are hosting" : "You are going";
   const color = activity.isHost
     ? "secondary"
     : activity.isGoing
     ? "warning"
     : "default";
+
   return (
     <Card elevation={3} sx={{ borderRadius: 3 }}>
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <CardHeader
-          avatar={<Avatar sx={{ height: 80, width: 80 }} />}
+          avatar={
+            <Avatar
+              src={activity.hostImageUrl}
+              sx={{ height: 80, width: 80 }}
+              alt="image of host"
+            />
+          }
           title={activity.title}
-          slotProps={{
-            title: {
-              fontWeight: "bold",
-              fontSize: 20,
-            },
+          titleTypographyProps={{ 
+            fontWeight: "bold",
+            fontSize: 20,
           }}
           subheader={
             <>
               Hosted by{" "}
-              <Link to={`/profiles/${activity.hostId}}`}>
+              <Link to={`/profiles/${activity.hostId}`}>
                 {activity.hostDisplayName}
               </Link>
             </>
@@ -46,14 +53,21 @@ export default function ActivityCard({ activity }: Props) {
         />
         <Box display="flex" flexDirection="column" gap={2} mr={2}>
           {(activity.isHost || activity.isGoing) && (
-            <Chip variant="outlined" label={label} color={color} sx={{ borderRadius: 2 }} />
+            <Chip
+              variant="outlined"
+              label={label}
+              color={color}
+              sx={{ borderRadius: 2 }}
+            />
           )}
           {activity.isCancelled && (
             <Chip label="Cancelled" color="error" sx={{ borderRadius: 2 }} />
           )}
         </Box>
       </Box>
+
       <Divider sx={{ mb: 3 }} />
+
       <CardContent sx={{ p: 0 }}>
         <Box display="flex" alignItems="center" mb={2} px={2}>
           <Box display="flex" flexGrow={0} alignItems="center">
@@ -62,6 +76,7 @@ export default function ActivityCard({ activity }: Props) {
               {formatDate(activity.date)}
             </Typography>
           </Box>
+
           <Place sx={{ ml: 3, mr: 1 }} />
           <Typography variant="body2">{activity.venue}</Typography>
         </Box>
@@ -84,7 +99,6 @@ export default function ActivityCard({ activity }: Props) {
           size="medium"
           variant="contained"
           sx={{ display: "flex", justifySelf: "self-end", borderRadius: 3 }}
-          onClick={() => {}}
         >
           View
         </Button>
